@@ -6,67 +6,43 @@
     <script type="text/javascript"
             src="js/zebra/zebra.js">
     </script>
-
-    <script>
-    </script>
 </head>
 
-<body>
+<body style="margin: 0;">
 
-<canvas width="1000" height="1000" id="ui.mix"></canvas>
-<div id="zebra.fm" style="visibility:hidden;line-height: 0; height:1px; vertical-align: baseline;"><span
-        id="zebra.fm.text"
-        style="display: inline; vertical-align: baseline; font-style: normal; font-variant: normal; font-weight: normal; font-size: 16px; line-height: normal; font-family: Verdana;">&nbsp;</span><img
-        id="zebra.fm.image" style="width:1px;height:1px;display:inline;vertical-align:baseline;"
-        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII%3D"
-        width="1" height="1"></div>
+<canvas id="ui.mix"></canvas>
+<div id="zebra.fm"></div>
 
 <script type="text/javascript">
-    zebra.ready(function () {
+
+    zebra.ready(function() {
         if (zebra.ui.$detectZCanvas("ui.mix") != null) return;
 
-        (new zebra.ui.zCanvas("ui.mix")).root.properties({
-            layout:new zebra.layout.ListLayout(),
-            border:new zebra.ui.Border(),
-            padding:8,
-            kids:[
-                new zebra.ui.BorderPan("Check", new zebra.ui.Panel({
-                    layout:new zebra.layout.ListLayout(),
-                    padding:6,
-                    kids:[
-                        new zebra.ui.Checkbox("Checkbox 1").properties({ value:true }),
-                        new zebra.ui.Checkbox("Checkbox 2"),
-                        new zebra.ui.Checkbox("Checkbox 3").properties({ enabled:false })
-                    ]
-                })),
+        var canvas = document.getElementById("ui.mix");
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
 
-                new zebra.ui.BorderPan("Combo", new zebra.ui.Panel({
-                    layout:new zebra.layout.ListLayout(),
-                    padding:6,
-                    kids:[
-                        new zebra.ui.Combo(["Item 1", "Item 2", "Item 3"])
-                    ]
-                })),
+        //var context = canvas.getContext("2d");
+        //context.strokeStyle = 'red';
+        //context.beginPath();
+        //context.rect(0, 0, canvas.width, canvas.height);
+        //context.stroke();
 
-                new zebra.ui.BorderPan("Tree", new zebra.ui.Panel({
-                    layout:new zebra.layout.BorderLayout(),
-                    preferredSize:[-1, 75],
-                    kids:{
-                        CENTER:new zebra.ui.tree.Tree({
-                            value:"Root",
-                            kids:[
-                                { value:"Item 1",
-                                    kids:[
-                                        { value:"Item 2"}
-                                    ] }
-                            ]
-                        })
-                    }
-                }))
-            ]
+        var root = (new zebra.ui.zCanvas("ui.mix")).root;
+        root.properties({
+            layout : new zebra.layout.BorderLayout(8,8),
+            border : new zebra.ui.Border(),
+            padding: 8,
+            kids: {
+                CENTER: new zebra.ui.TextField("Hi ...n", true),
+                BOTTOM: new zebra.ui.Button("Clear").properties({ canHaveFocus: false })
+            }
+        });
+
+        root.find("//Button")._.add(function() {
+            root.find("//TextField").setValue("");
         });
     });
-
 
 </script>
 

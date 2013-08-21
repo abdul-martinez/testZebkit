@@ -670,11 +670,16 @@ if (pkg.isInBrowser) {
                            : [ this.protocol, "//", this.host, this.path, p ].join('');
     };
 
-    if (window.addEventListener) {
-        window.addEventListener('DOMContentLoaded', complete, false);
+    if (!navigator.isCocoonJS) {
+        if (window.addEventListener) {
+            window.addEventListener('DOMContentLoaded', complete, false);
+        }
+        else {
+            window.attachEvent('onload', complete);
+        }
     }
     else {
-        window.attachEvent('onload', complete);
+        window.onload = complete;
     }
 }
 else {
@@ -4730,11 +4735,11 @@ pkg.PaintManager = Class(pkg.Manager, [
 
                                     //!!!! debug
                                     //zebra.print(" ============== DA = " + canvas.da.y );
-                                    // var dg = canvas.canvas.getContext("2d");
-                                    // dg.strokeStyle = 'red';
+                                    //var dg = canvas.canvas.getContext("2d");
+                                    //dg.strokeStyle = 'red';
                                     //dg.beginPath();
                                     //dg.rect(da.x, da.y, da.width, da.height);
-                                    // dg.stroke();
+                                    //dg.stroke();
 
                                     context.clipRect(canvas.da.x, canvas.da.y, canvas.da.width, canvas.da.height);
                                     $this.paint(context, canvas);
@@ -5715,7 +5720,7 @@ pkg.zCanvas = Class(pkg.Panel, [
             // on mobile devices this force to leave edit component by grabbing focus from 
             // the editor component (input text field)
             if (document.activeElement != this.canvas) {
-                this.canvas.focus();  
+                //this.canvas.focus(); -- Abdul
             }
         };
 
@@ -5929,16 +5934,16 @@ pkg.zCanvas = Class(pkg.Panel, [
 
 zebra.ready(function() {
     $fmCanvas = document.createElement("canvas").getContext("2d");
-    
+
     var e = document.getElementById("zebra.fm");
     if (e == null) {
         e = document.createElement("div");
         e.setAttribute("id", "zebra.fm");
-        e.setAttribute("style", "visibility:hidden;line-height: 0; height:1px; vertical-align: baseline;");
-        e.innerHTML = "<span id='zebra.fm.text'  style='display:inline;vertical-align:baseline;'>&nbsp;</span>" +
-                      "<img  id='zebra.fm.image' style='width:1px;height:1px;display:inline;vertical-align:baseline;' src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII%3D' width='1' height='1'/>";
         document.body.appendChild(e);
     }
+    e.setAttribute("style", "visibility:hidden;line-height: 0; height:1px; vertical-align: baseline;");
+    e.innerHTML = "<span id='zebra.fm.text'  style='display:inline;vertical-align:baseline;'>&nbsp;</span>" +
+                  "<img  id='zebra.fm.image' style='width:1px;height:1px;display:inline;vertical-align:baseline;' src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII%3D' width='1' height='1'/>";
     $fmText    = document.getElementById("zebra.fm.text");
     $fmImage   = document.getElementById("zebra.fm.image");
 
@@ -6043,8 +6048,12 @@ zebra.ready(function() {
             }
         }
 
-        document.addEventListener("DOMNodeInserted", correctOffset, false);
-        document.addEventListener("DOMNodeRemoved", correctOffset, false);
+        /*
+        if (!navigator.isCocoonJS) {
+            document.addEventListener("DOMNodeInserted", correctOffset, false);
+            document.addEventListener("DOMNodeRemoved", correctOffset, false);
+        }
+        */
         window.addEventListener("resize", correctOffset, false);
     }
     catch(e) {
@@ -6194,7 +6203,11 @@ pkg.TextRender = Class(pkg.Render, zebra.util.Position.PositionMetric, [
         this.getLineHeight = function(l) { return this.font.height; };
         this.getMaxOffset  = function()  { return this.target.getTextLength(); };
         this.ownerChanged  = function(v) { this.owner = v; };
-        this.paintLine     = function(g,x,y,line,d) { g.fillText(this.getLine(line), x, y + this.font.ascent); };
+        this.paintLine     = function(g,x,y,line,d) {
+            console.log("Context: " + g.canvas.width + "," + g.canvas.width);
+            console.log("FillText: '" + this.getLine(line) + "' " + x + " " + (y + this.font.ascent));
+            g.fillText(this.getLine(line), x, y + this.font.ascent);
+        };
         this.getLine       = function(r) { return this.target.getLine(r); };
 
         this.targetWasChanged = function(o,n){

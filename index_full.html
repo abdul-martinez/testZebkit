@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+
+    <script type="text/javascript"
+            src="js/zebra/zebra.js">
+    </script>
+
+    <script>
+    </script>
+</head>
+
+<body>
+
+<canvas width="1000" height="600" id="ui.mix"></canvas>
+<div id="zebra.fm"></div>
+
+<script type="text/javascript">
+    zebra.ready(function () {
+        if (zebra.ui.$detectZCanvas("ui.mix") != null) return;
+
+        (new zebra.ui.zCanvas("ui.mix")).root.properties({
+            layout:new zebra.layout.ListLayout(),
+            border:new zebra.ui.Border(),
+            padding:8,
+            kids:[
+                new zebra.ui.BorderPan("Check", new zebra.ui.Panel({
+                    layout:new zebra.layout.ListLayout(),
+                    padding:6,
+                    kids:[
+                        new zebra.ui.Checkbox("Checkbox 1").properties({ value:true }),
+                        new zebra.ui.Checkbox("Checkbox 2"),
+                        new zebra.ui.Checkbox("Checkbox 3").properties({ enabled:false })
+                    ]
+                })),
+
+                new zebra.ui.BorderPan("Combo", new zebra.ui.Panel({
+                    layout:new zebra.layout.ListLayout(),
+                    padding:6,
+                    kids:[
+                        new zebra.ui.Combo(["Item 1", "Item 2", "Item 3"])
+                    ]
+                })),
+
+                new zebra.ui.BorderPan("Tree", new zebra.ui.Panel({
+                    layout:new zebra.layout.BorderLayout(),
+                    preferredSize:[-1, 75],
+                    kids:{
+                        CENTER:new zebra.ui.tree.Tree({
+                            value:"Root",
+                            kids:[
+                                { value:"Item 1",
+                                    kids:[
+                                        { value:"Item 2"}
+                                    ] }
+                            ]
+                        })
+                    }
+                }))
+            ]
+        });
+    });
+
+
+</script>
+
+</body>
+</html>
